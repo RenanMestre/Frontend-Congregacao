@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #4f46e5, #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-bg {
+    background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.1), transparent),
+                radial-gradient(circle at bottom left, rgba(147, 51, 234, 0.1), transparent);
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Adicionando responsividade geral */
+
+/* Ajustes para dispositivos pequenos */
+@media (max-width: 640px) {
+    nav .hidden.md\:flex {
+        display: none;
+    }
+
+    nav .flex {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-bg h1 {
+        font-size: 2rem;
+    }
+
+    .hero-bg p {
+        font-size: 1rem;
+    }
+
+    .hero-bg button {
+        width: 100%;
+    }
+
+    .grid.md\:grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .hero-bg h1 {
+        font-size: 3rem;
+    }
+
+    .hero-bg p {
+        font-size: 1.25rem;
+    }
+
+    .grid.md\:grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

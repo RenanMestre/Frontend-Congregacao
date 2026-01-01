@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin | Gestão de Territórios</title>
+    <!-- Boxicons para ícones modernos -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: "Inter", sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-action {
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Responsividade para dispositivos pequenos */
+        @media (max-width: 640px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .glass-panel {
+                padding: 1rem;
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table tbody tr {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            table tbody tr td {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.5rem 0;
+            }
+
+            table tbody tr td:first-child {
+                font-weight: bold;
+            }
+        }
+
+        /* Responsividade para tablets */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .glass-panel {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header do Painel -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">Painel de Administração</h1>
+                <p class="text-slate-400">Congregação Jardim dos Tucanos - Gestão de Territórios</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="openModal('modalAmanha')" class="btn-action flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-500/20">
+                    <i class='bx bx-plus-circle text-xl'></i>
+                    Adicionar para Amanhã
+                </button>
+                <button onclick="openModal('modalAdicional')" class="btn-action flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm border border-slate-700">
+                    <i class='bx bx-map-pin text-xl'></i>
+                    Territórios Adicionais
+                </button>
+                <button onclick="logout()" class="btn-action flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-red-500/20 border border-red-600">
+                    <i class='bx bx-log-out text-xl'></i>
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-panel p-6 border-l-4 border-l-emerald-500">
+                <span class="text-slate-400 text-sm font-medium uppercase tracking-wider">Concluídos</span>
+                <div class="text-3xl font-bold mt-1 text-white">12</div>
+            </div>
+            <div class="glass-panel p-6 border-l-4 border-l-indigo-500">
+                <span class="text-slate-400 text-sm font-medium uppercase tracking-wider">Pendentes</span>
+                <div class="text-3xl font-bold mt-1 text-indigo-400">08</div>
+            </div>
+            <div class="glass-panel p-6 border-l-4 border-l-purple-500">
+                <span class="text-slate-400 text-sm font-medium uppercase tracking-wider">Territórios Adicionais</span>
+                <div class="text-3xl font-bold mt-1 text-purple-400">04</div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="glass-panel overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <h2 class="text-xl font-semibold">Histórico de Conclusão</h2>
+                <div class="relative w-full sm:w-auto">
+                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500'></i>
+                    <input type="text" placeholder="Filtrar por nome ou data..." class="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-sm outline-none focus:border-indigo-500 transition">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-slate-400 text-xs uppercase tracking-widest">
+                            <th class="px-6 py-5 font-bold">Território</th>
+                            <th class="px-6 py-5 font-bold">Concluído Por</th>
+                            <th class="px-6 py-5 font-bold">Data de Conclusão</th>
+                            <th class="px-6 py-5 font-bold text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr class="table-row border-t border-slate-800/50 transition">
+                            <td class="px-6 py-4 font-medium text-white">Quadra 04 (Jardim dos Tucanos)</td>
+                            <td class="px-6 py-4 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs">JP</div>
+                                Jhonatan Paula
+                            </td>
+                            <td class="px-6 py-4">01/01/2025 às 10:30</td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="bg-emerald-500/10 text-emerald-500 text-[10px] px-3 py-1 rounded-full font-bold border border-emerald-500/20 uppercase tracking-tighter">Concluído</span>
+                            </td>
+                        </tr>
+                        <tr class="table-row border-t border-slate-800/50 transition">
+                            <td class="px-6 py-4 font-medium text-white">Quadra 07 Residencial Lascala</td>
+                            <td class="px-6 py-4 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs">RM</div>
+                                Renan Mestre
+                            </td>
+                            <td class="px-6 py-4">31/12/2025 às 16:45</td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="bg-emerald-500/10 text-emerald-500 text-[10px] px-3 py-1 rounded-full font-bold border border-emerald-500/20 uppercase tracking-tighter">Concluído</span>
+                            </td>
+                        </tr>
+                        <tr class="table-row border-t border-slate-800/50 transition">
+                            <td class="px-6 py-4 font-medium text-white">Quadra 12 Avenida Champagnat</td>
+                            <td class="px-6 py-4 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs">FS</div>
+                                Felipe Sá
+                            </td>
+                            <td class="px-6 py-4">23/12/2025 às 09:15</td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="bg-emerald-500/10 text-emerald-500 text-[10px] px-3 py-1 rounded-full font-bold border border-emerald-500/20 uppercase tracking-tighter">Concluído</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar para Amanhã -->
+    <div id="modalAmanha" class="modal">
+        <div class="glass-panel w-full max-w-md p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Território para Amanhã</h2>
+                <button onclick="closeModal('modalAmanha')" class="text-slate-400 hover:text-white transition text-2xl">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Selecione o Território*</label>
+                    <select class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" required>
+                        <option value="">Selecione...</option>
+                        <option value="1">Quadra 01</option>
+                        <option value="2">Quadra 02</option>
+                        <option value="3">Quadra 03</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Data*</label>
+                    <input type="date" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Dirigente (Opcional)</label>
+                    <input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="Nome do dirigente">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Saída de campo*</label>
+                    <input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="Ex: Com seus grupos ou na casa da ...">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Ponto de referência (Opcional)</label>
+                    <input type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="Ex: Supermercado Grandi">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Observações (Opcional)</label>
+                    <textarea name="observacoes" id="observacoes" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition h-24 resize-none" placeholder="Ex: Casa 555 não bater"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition mt-4">
+                    Salvar Território
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Territórios Adicionais -->
+    <div id="modalAdicional" class="modal">
+        <div class="glass-panel w-full max-w-md p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Novo Território Adicional</h2>
+                <button onclick="closeModal('modalAdicional')" class="text-slate-400 hover:text-white transition text-2xl">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Selecione o Território*</label>
+                    <select class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition" required>
+                        <option value="">Selecione...</option>
+                        <option value="1">Quadra 01</option>
+                        <option value="2">Quadra 02</option>
+                        <option value="3">Quadra 03</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2 font-medium">Observações</label>
+                    <textarea placeholder="Algum detalhe importante?" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 outline-none focus:border-indigo-500 transition h-24 resize-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-xl font-bold shadow-lg shadow-purple-500/20 transition mt-4">
+                    Criar Território Adicional
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="mt-12 text-center text-slate-500 text-[10px] uppercase tracking-[0.2em] pb-8">
+        &copy; 2025 Congregação Jardim dos Tucanos | Painel Administrativo
+    </footer>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        function logout() {
+            // Redirecionar para a página de login (substitua "login.html" pelo URL correto)
+            window.location.href = "login.html";
+            alert("Você saiu com sucesso!");
+        }
+    </script>
+</body>
+</html>
