@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interativo - Jardim dos Tucanos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+
+        .map-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        /* Hotspots (Números Clicáveis) */
+        .hotspot {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(79, 70, 229, 0.9);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5);
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+
+        .hotspot:hover {
+            transform: scale(1.2);
+            background: #4f46e5;
+        }
+
+        .hotspot.completed {
+            background: #10b981;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+
+        /* Mini Janela (Popover) */
+        .info-card {
+            display: none;
+            position: absolute;
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 20;
+            border: 1px solid #e2e8f0;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-card.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- Navegação -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-4">
+            <div class="flex justify-between items-center">
+                <a href="lista-territorios.html" class="text-slate-500 hover:text-indigo-600 transition"><i class="fas fa-arrow-left mr-2"></i> Voltar</a>
+                <span class="text-xl font-bold tracking-tight text-indigo-600">Território 1 Lascala-1</span>
+                <div class="w-20"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-20 px-4 flex flex-col items-center">
+        
+        <div class="text-center mb-8 max-w-2xl">
+            <h1 class="text-2xl font-bold mb-2">Selecione uma Quadra no Mapa</h1>
+            <p class="text-slate-600 text-sm">Clique nos números azuis para ver detalhes da designação ou marcar como concluído.</p>
+        </div>
+
+        <!-- Contentor do Mapa -->
+        <div class="map-container" id="mapFrame">
+            <!-- Imagem Original do Mapa -->
+            <img src="src/img/Território 1 (Lascala-1).jpg" alt="Mapa de Território" class="w-full h-auto block">
+
+            <!-- Hotspots (Posicionados aproximadamente sobre os números da imagem) -->
+            <!-- Quadra 1 -->
+            <div class="hotspot" style="top: 25%; left: 75%;" onclick="toggleCard(event, 1)">1</div>
+            <!-- Quadra 2 -->
+            <div class="hotspot" style="top: 65%; left: 75%;" onclick="toggleCard(event, 2)">2</div>
+            <!-- Quadra 3 -->
+            <div class="hotspot" style="top: 30%; left: 55%;" onclick="toggleCard(event, 3)">3</div>
+            <!-- Quadra 4 -->
+            <div class="hotspot" style="top: 50%; left: 45%;" onclick="toggleCard(event, 4)">4</div>
+            <!-- Quadra 5 -->
+            <div class="hotspot" style="top: 70%; left: 55%;" onclick="toggleCard(event, 5)">5</div>
+            <!-- Quadra 6 -->
+            <div class="hotspot" style="top: 70%; left: 28%;" onclick="toggleCard(event, 6)">6</div>
+
+            <!-- Card de Detalhes Dinâmico -->
+            <div id="infoCard" class="info-card">
+                <div class="flex justify-between items-start mb-4">
+                    <h4 class="font-bold text-lg" id="cardTitle">Quadra X</h4>
+                    <span id="cardStatus" class="text-[10px] font-bold px-2 py-1 rounded bg-red-100 text-red-500 uppercase">Pendente</span>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="text-sm">
+                        <p class="text-slate-400 font-medium">Designação Atual:</p>
+                        <p id="cardDesignation" class="text-slate-700 font-semibold">Nenhuma designação ativa</p>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div id="completionForm">
+                        <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Concluir agora:</p>
+                        <input type="text" id="inputName" placeholder="Nome do Publicador" class="w-full border border-slate-200 rounded-lg p-2 text-sm mb-2 outline-none focus:border-indigo-500 transition">
+                        <button onclick="finishTerritory()" class="w-full bg-emerald-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-emerald-600 transition">
+                            Marcar Concluído
+                        </button>
+                    </div>
+
+                    <div id="completedInfo" class="hidden text-center py-2 text-emerald-600 font-bold text-sm">
+                        <i class="fas fa-check-circle mr-1"></i> Território Concluído
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentQuadra = null;
+        let quadrasData = {
+            1: { status: 'Pendente', user: 'N/A' },
+            2: { status: 'Pendente', user: 'N/A' },
+            3: { status: 'Pendente', user: 'N/A' },
+            4: { status: 'Pendente', user: 'N/A' },
+            5: { status: 'Pendente', user: 'N/A' },
+            6: { status: 'Pendente', user: 'N/A' }
+        };
+
+        const card = document.getElementById('infoCard');
+
+        function toggleCard(event, id) {
+            event.stopPropagation();
+            currentQuadra = id;
+            const data = quadrasData[id];
+            
+            // Posicionar o card perto do clique
+            const rect = event.target.getBoundingClientRect();
+            const containerRect = document.getElementById('mapFrame').getBoundingClientRect();
+            
+            let topPos = (rect.top - containerRect.top) + 50;
+            let leftPos = (rect.left - containerRect.left) - 120;
+
+            // Ajuste para não sair do mapa
+            if (leftPos < 10) leftPos = 10;
+            if (leftPos + 280 > containerRect.width) leftPos = containerRect.width - 290;
+
+            card.style.top = topPos + 'px';
+            card.style.left = leftPos + 'px';
+            
+            // Atualizar conteúdo
+            document.getElementById('cardTitle').innerText = 'Quadra ' + id;
+            updateCardUI(data);
+
+            card.classList.add('active');
+        }
+
+        function updateCardUI(data) {
+            const statusBadge = document.getElementById('cardStatus');
+            const designation = document.getElementById('cardDesignation');
+            const form = document.getElementById('completionForm');
+            const info = document.getElementById('completedInfo');
+
+            if (data.status === 'Concluído') {
+                statusBadge.innerText = 'Concluído';
+                statusBadge.className = 'text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-600 uppercase';
+                designation.innerText = data.user;
+                form.classList.add('hidden');
+                info.classList.remove('hidden');
+            } else {
+                statusBadge.innerText = 'Pendente';
+                statusBadge.className = 'text-[10px] font-bold px-2 py-1 rounded bg-red-100 text-red-500 uppercase';
+                designation.innerText = 'Nenhuma designação ativa';
+                form.classList.remove('hidden');
+                info.classList.add('hidden');
+            }
+        }
+
+        function finishTerritory() {
+            const name = document.getElementById('inputName').value;
+            if (!name) return alert('Por favor, insira o seu nome.');
+
+            // Guardar dados
+            quadrasData[currentQuadra] = {
+                status: 'Concluído',
+                user: name + ' (' + new Date().toLocaleDateString('pt-PT') + ')'
+            };
+
+            // Atualizar UI do card
+            updateCardUI(quadrasData[currentQuadra]);
+
+            // Atualizar estilo do hotspot no mapa
+            const hotspots = document.querySelectorAll('.hotspot');
+            hotspots[currentQuadra - 1].classList.add('completed');
+            hotspots[currentQuadra - 1].innerHTML = '<i class="fas fa-check"></i>';
+
+            document.getElementById('inputName').value = '';
+        }
+
+        // Fechar card ao clicar fora
+        document.addEventListener('click', () => {
+            card.classList.remove('active');
+        });
+
+        card.addEventListener('click', (e) => e.stopPropagation());
+    </script>
+</body>
+</html>

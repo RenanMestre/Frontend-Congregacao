@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Territórios - Jardim dos Tucanos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .territory-card {
+            @apply bg-white border border-slate-200 rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 flex flex-col justify-between;
+        }
+
+        .card-icon {
+            @apply w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center mb-4 text-lg;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- Navegação -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-4">
+            <div class="flex justify-between items-center h-8">
+                <span class="text-xl font-bold tracking-tight text-indigo-600">Jardim dos Tucanos</span>
+                <div class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="index.html" class="hover:text-indigo-600 transition">Início</a>
+                    <a href="mapa-territorio.html" class="hover:text-indigo-600 transition">Mapa do território</a>
+                    <a href="#" class="text-indigo-600 border-b-2 border-indigo-600 pb-1">Lista</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-28 pb-32 px-4 max-w-7xl mx-auto">
+        <!-- Cabeçalho da Lista -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900">Territórios</h1>
+                <p class="text-slate-500 mt-2 text-lg">Selecione uma área para visualizar o mapa e as informações da quadra.</p>
+            </div>
+            <div class="flex gap-3">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Procurar território..." class="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition w-full md:w-80 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade de Territórios -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <!-- Gerador de Itens de 1 a 12 para exemplo -->
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 01</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Setor Norte - Quadras Residenciais</p>
+                </div>
+                <a href="território 1.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 02</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Centro - Área Comercial e Lojas</p>
+                </div>
+                <a href="território 2.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 03</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Condomínio Morada do Sol</p>
+                </div>
+                <a href="território 3.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 04</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Vila Esperança - Quadra 400</p>
+                </div>
+                <a href="território 4.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 05</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Setor Sul - Prédios Públicos</p>
+                </div>
+                <a href="território 5.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 06</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Av. Brasil - Lado Ímpar</p>
+                </div>
+                <a href="território 6.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 07</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Rua das Acácias e Arredores</p>
+                </div>
+                <a href="território 7.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 08</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Setor Leste - Área Rural</p>
+                </div>
+                <a href="território 8.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 09</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Loteamento Novo Jardim</p>
+                </div>
+                <a href="território 9.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 10</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Zona Industrial - Quadra A-F</p>
+                </div>
+                <a href="território 10.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 11</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Bairro das Palmeiras - Setor 1</p>
+                </div>
+                <a href="território 11.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+            <div class="territory-card">
+                <div class="card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Território 12</h3>
+                    <p class="text-sm text-slate-500 mt-1 mb-6">Bairro das Palmeiras - Setor 2</p>
+                </div>
+                <a href="território 12.html" class="block w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-md">
+                    Visualizar
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="py-8 border-t border-slate-200 bg-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-xs">© 2026 Desenvolvido e mantido pela <strong><a href="https://scripthadder.com.br" class="text-indigo-600 hover:underline">ScriptHadder</a></strong>. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
